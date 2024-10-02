@@ -15,6 +15,7 @@ class UInputMappingContext;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
+DECLARE_MULTICAST_DELEGATE(FOpponentFoundSignature);
 
 UCLASS(config=Game)
 class ATimeParadoxCharacter : public ACharacter
@@ -36,6 +37,8 @@ class ATimeParadoxCharacter : public ACharacter
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
+
+
 	
 public:
 	ATimeParadoxCharacter();
@@ -49,12 +52,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+	/** Interact Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* InteractAction;
+
+	
+
 protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+	/** Called for interact input */
+	void Interact(const FInputActionValue& Value);
 
 protected:
 	// APawn interface
@@ -67,5 +79,11 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+	
+
+private:
+	// Vision component
+	UPROPERTY(VisibleDefaultsOnly)
+	TObjectPtr<class UCPP_VisionComponent> VisionComp = nullptr;
 };
 
