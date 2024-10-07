@@ -10,6 +10,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
+#include "CPP_InteractionInterface.h"
+#include "CPP_VisionComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -36,6 +38,10 @@ ATimeParadoxCharacter::ATimeParadoxCharacter()
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
+	// Instantiate vision component and attach to camera component
+	VisionComp = CreateDefaultSubobject<UCPP_VisionComponent>(TEXT("Vision Component"));
+	VisionComp->SetupAttachment(FirstPersonCameraComponent);
+
 }
 
 void ATimeParadoxCharacter::BeginPlay()
@@ -60,6 +66,9 @@ void ATimeParadoxCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATimeParadoxCharacter::Look);
+
+		// Interact
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ATimeParadoxCharacter::Interact);
 	}
 	else
 	{
@@ -91,5 +100,31 @@ void ATimeParadoxCharacter::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void ATimeParadoxCharacter::Interact(const FInputActionValue& Value)
+{
+	
+		// Display a simple text message on the screen
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("You pressed the interact key!"));
+	// This variable will be passed to the vision component to let it know
+	// we are looking for an object of type Interactive (aka GameTraceChannel2)
+	FCollisionObjectQueryParams ObjectParams;
+	ObjectParams.AddObjectTypesToQuery(ECC_GameTraceChannel2);
+ //
+	// Attempt to return interactive actor hit by sweep
+	AActor* HitActor = VisionComp->LookForObjectType(ObjectParams,true,5);
+ 
+	// If the vision component does not return a null pointer, an interactive actor has been spotted i.e. something that can be interacted with via the Interaction Interface. 
+	if (HitActor)
+	{
+		
+		// Attempt to get that actors Interaction interface
+		if (ICPP_InteractionInterface* ActorInterface = Cast<ICPP_InteractionInterface>(HitActor))
+		{			
+			// Execute their version of ActivateActor
+			ActorInterface->ActivateActor();
+		}
 	}
 }
