@@ -2,6 +2,7 @@
 
 #include "TimeParadoxGameMode.h"
 #include "TimeParadoxCharacter.h"
+#include "Public/TimeGameState.h"
 #include "UObject/ConstructorHelpers.h"
 
 ATimeParadoxGameMode::ATimeParadoxGameMode()
@@ -10,5 +11,6 @@ ATimeParadoxGameMode::ATimeParadoxGameMode()
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/FirstPerson/Blueprints/BP_FirstPersonCharacter"));
 	DefaultPawnClass = PlayerPawnClassFinder.Class;
+	GameStateClass = ATimeGameState::StaticClass();
 
 }
