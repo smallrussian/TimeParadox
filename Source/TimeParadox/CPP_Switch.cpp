@@ -77,7 +77,7 @@ void ACPP_Switch::ActivateActor()
 		{
 			bp_lightcontroller->ToggleLights(bIsActivated);
 
-			bp_lightcontroller->ToggleEmergencyLightsColor(bHasActivated);
+			bp_lightcontroller->ToggleEmergencyLightsColor(!bIsActivated);
 		}
           
                 
