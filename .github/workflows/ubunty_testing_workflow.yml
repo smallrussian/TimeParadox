@@ -15,6 +15,9 @@ jobs:
       - name: Display ubuntu version we are using
         run: lsb_release -a
 
+      - name: Change directory
+        run: cd .github/
+
       - name: Display files
         run: ls -a
 
