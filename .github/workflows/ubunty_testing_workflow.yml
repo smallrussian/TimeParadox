@@ -15,6 +15,9 @@ jobs:
       - name: Display ubuntu version we are using
         run: lsb_release -a
 
+      - name: Display files
+        run: ls -a
+
       - name: changing the execution mode to make it executable
         run: 
           chmod +x ubuntu_tester.sh
