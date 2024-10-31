@@ -15,17 +15,16 @@ jobs:
       - name: Display ubuntu version we are using
         run: lsb_release -a
 
-      - name: Change directory
-        run: cd .github/
+
 
       - name: Display files
         run: ls -a
 
       - name: changing the execution mode to make it executable
         run: 
-          chmod +x ubuntu_tester.sh
+          chmod +x .github/ubuntu_tester.sh
 
       - name: Run the ubuntu_tester.sh script and see the output
         run:
-          ./ubuntu_tester.sh
+          .github/ubuntu_tester.sh
        
