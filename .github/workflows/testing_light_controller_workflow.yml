@@ -1,0 +1,24 @@
+name: Test Light Controller
+
+run-name: Test Light Controller
+
+
+
+on: [push]
+
+jobs:
+  trail-ubuntu-run:
+    runs-on: ubuntu-latest
+    steps:
+    #clone the github to the runner system
+      - uses: actions/checkout@v4
+
+
+      - name: Display files
+        run: ls -a
+
+      - name: Run Test
+        run: UE5Editor-Cmd.exe TimeParadox.uproject -ExecCmds="Automation RunTests Test_LightController" -TestExit="Automation Test Queue Empty"
+
+
+       
