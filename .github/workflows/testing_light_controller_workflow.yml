@@ -8,12 +8,27 @@ on: [push]
 
 jobs:
   trail-ubuntu-run:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     #clone the github to the runner system
       - uses: actions/checkout@v4
 
+      - name: Set up Environment
+        uses: microsoft/setup-msbuild@v1
 
+      - name: Install Dependencies
+        run: choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools"
+
+      - name: Download Unreal Engine
+        uses: ue5-docker/github-actions@v0
+
+      - name: Build Project
+        run: |
+          & "C:\Program Files\Epic Games\UE_5.0\Engine\Build\BatchFiles\RunUAT.bat" BuildCookRun -project="TimeParadox.uproject" -noP4 -clientconfig=Development -serverconfig=Development -platform=Win64 -build -cook -stage -archive -archivedirectory="<OutputDirectory>"
+
+      - name: Run Tests
+        run: |
+          & "C:\Program Files\Epic Games\UE_5.0\Engine\Binaries\Win64\UnrealEditor.exe" "TimeParadox.uproject" -ExecCmds="Automation RunTests All" -TestExit="Automation Test Queue Empty" -Log
       - name: Display files
         run: ls -a
 
