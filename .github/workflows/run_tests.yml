@@ -21,7 +21,8 @@ jobs:
       # Read the Target.cs file and make sure it has the correct unreal engine version
       - name: Check Unreal Engine target version in Target.cs file
         run: |
-         FILE_PATH="Source/TimeParadox.Target.cs"
+         FILE_PATH="TimeParadox.Target.cs"
+         cd Source 
 
          if[-f "$FILE_PATH"] then
 
