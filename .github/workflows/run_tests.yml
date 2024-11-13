@@ -13,8 +13,11 @@ jobs:
     #clone the github to the runner system
       - uses: actions/checkout@v4
 
+      - name: move into source
+        run: cd Source 
+
       - name: look at FILE_PATH
-        run: cd Source | ls -a
+        run: ls -a
 
       # Read the Target.cs file and make sure it has the correct unreal engine version
       - name: Check Unreal Engine target version in Target.cs file
