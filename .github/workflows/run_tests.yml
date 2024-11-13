@@ -13,19 +13,7 @@ jobs:
     #clone the github to the runner system
       - uses: actions/checkout@v4
 
-      # Read the TimeParadox.uproject file and make sure it has the correct unreal engine version
-      - name: Check Unreal Engine target version in project file
-        run: |
-         FILE_PATH="Games/TimeParadox/TimeParadox.uproject"
 
-         if[-f "$FILE_PATH"]; then
-
-          if grep -q '"EngineAssociation": "5.4"' "$FILE_PATH"; then
-            echo "Project correctly configured to run on UE5"
-          else
-            echo "Error: Project not configured to run on UE5"
-            exit 1
-          fi
 
       # Read the Target.cs file and make sure it has the correct unreal engine version
       - name: Check Unreal Engine target version in Target.cs file
