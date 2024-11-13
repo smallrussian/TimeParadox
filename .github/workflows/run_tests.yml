@@ -24,9 +24,9 @@ jobs:
           FILE_PATH="TimeParadox.uproject"
           
           if grep -q '"EngineAssociation": "5.4"' "$FILE_PATH"; then
-            echo "Project correctly configured to run on UE5"
+            echo "Project solution correctly configured to run on UE5"
           else
-            echo "Error: Project not configured to run on UE5"
+            echo "Error: Project solution not configured to run on UE5"
             exit 1
           fi
 
@@ -41,6 +41,22 @@ jobs:
             echo "Project correctly configured to run on UE5"
           else
             echo "Error: Project not configured to run on UE5"
+            exit 1
+          fi
+
+        # Read the TimeParadox.Build.cs file andCheck that the correct dependencies are included
+      - name: Check that the correct dependencies are included
+        run: |
+          FILE_PATH="TimeParadox.Build.cs"
+          cd Source 
+          cd TimeParadox
+
+
+          
+          if grep -q ""Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput"" "$FILE_PATH"; then
+            echo "Project project dependencies properly included"
+          else
+            echo "Error: Project project dependencies not included"
             exit 1
           fi
 
