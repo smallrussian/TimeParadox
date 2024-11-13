@@ -13,12 +13,13 @@ jobs:
     #clone the github to the runner system
       - uses: actions/checkout@v4
 
-
+      - name: look at FILE_PATH
+        run: ls -a
 
       # Read the Target.cs file and make sure it has the correct unreal engine version
       - name: Check Unreal Engine target version in Target.cs file
         run: |
-         FILE_PATH="Games/TimeParadox/Source/TimeParadox.Target.cs"
+         FILE_PATH="Source/TimeParadox.Target.cs"
 
          if[-f "$FILE_PATH"] then
 
