@@ -18,6 +18,18 @@ jobs:
           cd Source 
           ls -a
 
+      # Read the solution file and make sure it has the correct unreal engine version
+      - name: Check Unreal Engine target version in solution file
+        run: |
+          FILE_PATH="TimeParadox.uproject"
+          
+          if grep -q "IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_4;" "$FILE_PATH"; then
+            echo "Project correctly configured to run on UE5"
+          else
+            echo "Error: Project not configured to run on UE5"
+            exit 1
+          fi
+
       # Read the Target.cs file and make sure it has the correct unreal engine version
       - name: Check Unreal Engine target version in Target.cs file
         run: |
