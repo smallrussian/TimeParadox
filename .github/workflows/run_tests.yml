@@ -53,7 +53,7 @@ jobs:
 
 
           
-          if grep -q ""Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput"" "$FILE_PATH"; then
+          if grep -q '"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput"' "$FILE_PATH"; then
             echo "Project project dependencies properly included"
           else
             echo "Error: Project project dependencies not included"
