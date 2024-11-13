@@ -20,7 +20,7 @@ jobs:
         run: |
          FILE_PATH="Games/TimeParadox/Source/TimeParadox.Target.cs"
 
-         if[-f "$FILE_PATH"]; then
+         if[-f "$FILE_PATH"] then
 
           if grep -q "IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_4;" "$FILE_PATH"; then
             echo "Project correctly configured to run on UE5"
