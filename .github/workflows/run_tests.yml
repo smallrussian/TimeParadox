@@ -24,14 +24,13 @@ jobs:
           FILE_PATH="TimeParadox.Target.cs"
           cd Source 
 
-          if[-f "$FILE_PATH"] then
-
-            if grep -q "IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_4;" "$FILE_PATH"; then
-              echo "Project correctly configured to run on UE5"
-            else
-              echo "Error: Project not configured to run on UE5"
-              exit 1
-            fi
+          
+          if grep -q "IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_4;" "$FILE_PATH"; then
+            echo "Project correctly configured to run on UE5"
+          else
+            echo "Error: Project not configured to run on UE5"
+            exit 1
+          fi
 
 
 
