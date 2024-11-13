@@ -23,7 +23,7 @@ jobs:
         run: |
           FILE_PATH="TimeParadox.uproject"
           
-          if grep -q ""EngineAssociation": "5.4"" "$FILE_PATH"; then
+          if grep -q '"EngineAssociation": "5.4"' "$FILE_PATH"; then
             echo "Project correctly configured to run on UE5"
           else
             echo "Error: Project not configured to run on UE5"
