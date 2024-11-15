@@ -63,9 +63,9 @@ jobs:
       - name: Build Unity Game
         uses: game-ci/unity-builder@v2
         with:
-          projectPath: 'TimeParadox'  # Adjust path to your Unity project
+          projectPath: 'TimeParadox'
           unityVersion: '2021.3.11f1'  # Adjust Unity version as needed
-          targetPlatform: StandaloneOSX  # Adjust platform (e.g., StandaloneWindows, StandaloneLinux)
+          targetPlatform: StandaloneWindows
       
         # Check if the build output was generated
       - name: Verify Unity Build
