@@ -59,24 +59,25 @@ jobs:
             echo "Error: Project project dependencies not included"
             exit 1
           fi
-        # New test to build the Unity game
-      - name: Build Unity Game
-        uses: game-ci/unity-builder@v2
+      - name: Cook, Stage & Package UE Project
+        uses: OrchidIsle/UE5-Build-Project@latest
         with:
-          projectPath: 'TimeParadox'
-          unityVersion: '2021.3.11f1'  # Adjust Unity version as needed
-          targetPlatform: StandaloneWindows
-      
-        # Check if the build output was generated
-      - name: Verify Unity Build
-        run: |
-          if [ -d "TimeParadox/Builds" ]; then
-            echo "Unity build completed successfully."
-          else
-            echo "Error: Unity build failed."
-            exit 1
-          fi  
-
-
-
-       
+          RUNUAT_PATH: 'C:/Unreal Engine/UE5.3_Source/Engine/Build/BatchFiles/RunUAT.bat'
+          UPROJECT_PATH: ${{ github.workspace }}/TimeParadox.uproject
+          BUILD_CONFIG: Development
+          PLATFORM: Win64
+          CLEAN: true
+          COOK: true
+          STAGE: true
+          PACKAGE: false
+          PAK: false
+          SERVER: false
+          ARCHIVE: false
+          NULLRHI: true
+          EDITOR: true
+          ENCRYPT_INI: false
+          RELEASE: '1.0.0'
+          PATCH: '0.0.0'
+          MAPS: ''
+          DELETE_PDB: true
+          ANTICHEAT_ENABLED: false
