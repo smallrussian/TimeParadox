@@ -63,6 +63,7 @@ jobs:
       - name: Check for README file
         run: |
           cd ../..
+          ls -a
           if [ -f README.md ]; then
             echo "README file exists."
           else
