@@ -1,5 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #include "TimeParadoxCharacter.h"
 #include "TimeParadoxProjectile.h"
 #include "Animation/AnimInstance.h"
@@ -12,6 +10,8 @@
 #include "Engine/LocalPlayer.h"
 #include "CPP_InteractionInterface.h"
 #include "CPP_VisionComponent.h"
+#include "Blueprint/UserWidget.h"
+#include "Components/TextBlock.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -35,22 +35,43 @@ ATimeParadoxCharacter::ATimeParadoxCharacter()
 	Mesh1P->SetupAttachment(FirstPersonCameraComponent);
 	Mesh1P->bCastDynamicShadow = false;
 	Mesh1P->CastShadow = false;
-	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
 	// Instantiate vision component and attach to camera component
 	VisionComp = CreateDefaultSubobject<UCPP_VisionComponent>(TEXT("Vision Component"));
 	VisionComp->SetupAttachment(FirstPersonCameraComponent);
 
+	// Initialize stopwatch variables
+	StopwatchTime = 0.0f;
+	bStopwatchRunning = false;
 }
 
 void ATimeParadoxCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
+	// Add stopwatch widget to viewport
+	if (StopwatchWidgetClass)
+	{
+		StopwatchWidget = CreateWidget<UUserWidget>(GetWorld(), StopwatchWidgetClass);
+		if (StopwatchWidget)
+		{
+			StopwatchWidget->AddToViewport();
+		}
+	}
 }
 
-//////////////////////////////////////////////////////////////////////////// Input
+void ATimeParadoxCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	// Update stopwatch time if running
+	if (bStopwatchRunning)
+	{
+		UpdateStopwatch(DeltaTime);
+	}
+}
 
 void ATimeParadoxCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {	
@@ -76,15 +97,60 @@ void ATimeParadoxCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 	}
 }
 
+// Stopwatch functions
+void ATimeParadoxCharacter::StartStopwatch()
+{
+	bStopwatchRunning = true;
+}
+
+void ATimeParadoxCharacter::StopStopwatch()
+{
+	bStopwatchRunning = false;
+}
+
+void ATimeParadoxCharacter::ResetStopwatch()
+{
+	bStopwatchRunning = false;
+	StopwatchTime = 0.0f;
+
+	// Reset the display
+	if (StopwatchWidget)
+	{
+		UTextBlock* StopwatchText = Cast<UTextBlock>(StopwatchWidget->GetWidgetFromName("StopwatchText"));
+		if (StopwatchText)
+		{
+			StopwatchText->SetText(FText::FromString(TEXT("00:00.00")));
+		}
+	}
+}
+
+void ATimeParadoxCharacter::UpdateStopwatch(float DeltaTime)
+{
+	StopwatchTime += DeltaTime;
+
+	// Format the time as MM:SS.MS
+	int Minutes = FMath::FloorToInt(StopwatchTime / 60.0f);
+	int Seconds = FMath::FloorToInt(FMath::Fmod(StopwatchTime, 60.0f));
+	int Milliseconds = FMath::FloorToInt((StopwatchTime - FMath::FloorToInt(StopwatchTime)) * 100);
+
+	FString FormattedTime = FString::Printf(TEXT("%02d:%02d.%02d"), Minutes, Seconds, Milliseconds);
+
+	// Update the UI
+	if (StopwatchWidget)
+	{
+		UTextBlock* StopwatchText = Cast<UTextBlock>(StopwatchWidget->GetWidgetFromName("StopwatchText"));
+		if (StopwatchText)
+		{
+			StopwatchText->SetText(FText::FromString(FormattedTime));
+		}
+	}
+}
 
 void ATimeParadoxCharacter::Move(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
-
 	if (Controller != nullptr)
 	{
-		// add movement 
 		AddMovementInput(GetActorForwardVector(), MovementVector.Y);
 		AddMovementInput(GetActorRightVector(), MovementVector.X);
 	}
@@ -92,12 +158,9 @@ void ATimeParadoxCharacter::Move(const FInputActionValue& Value)
 
 void ATimeParadoxCharacter::Look(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
-
 	if (Controller != nullptr)
 	{
-		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
@@ -105,25 +168,15 @@ void ATimeParadoxCharacter::Look(const FInputActionValue& Value)
 
 void ATimeParadoxCharacter::Interact(const FInputActionValue& Value)
 {
-	
-		// Display a simple text message on the screen
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("You pressed the interact key!"));
-	// This variable will be passed to the vision component to let it know
-	// we are looking for an object of type Interactive (aka GameTraceChannel2)
 	FCollisionObjectQueryParams ObjectParams;
 	ObjectParams.AddObjectTypesToQuery(ECC_GameTraceChannel2);
- //
-	// Attempt to return interactive actor hit by sweep
-	AActor* HitActor = VisionComp->LookForObjectType(ObjectParams,true,5);
- 
-	// If the vision component does not return a null pointer, an interactive actor has been spotted i.e. something that can be interacted with via the Interaction Interface. 
+	AActor* HitActor = VisionComp->LookForObjectType(ObjectParams, true, 5);
+
 	if (HitActor)
 	{
-		
-		// Attempt to get that actors Interaction interface
 		if (ICPP_InteractionInterface* ActorInterface = Cast<ICPP_InteractionInterface>(HitActor))
-		{			
-			// Execute their version of ActivateActor
+		{
 			ActorInterface->ActivateActor();
 		}
 	}

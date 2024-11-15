@@ -1,9 +1,8 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Blueprint/UserWidget.h"
 #include "Logging/LogMacros.h"
 #include "TimeParadoxCharacter.generated.h"
 
@@ -38,13 +37,11 @@ class ATimeParadoxCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
 
-
-	
 public:
 	ATimeParadoxCharacter();
 
 protected:
-	virtual void BeginPlay();
+	virtual void BeginPlay() override;
 
 public:
 		
@@ -56,7 +53,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractAction;
 
-	
+	/** Stopwatch Widget Class */
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<UUserWidget> StopwatchWidgetClass;
 
 protected:
 	/** Called for movement input */
@@ -68,9 +67,16 @@ protected:
 	/** Called for interact input */
 	void Interact(const FInputActionValue& Value);
 
+	/** Stopwatch functions */
+	void StartStopwatch();
+	void StopStopwatch();
+	void ResetStopwatch();
+	void UpdateStopwatch(float DeltaTime);
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
+	virtual void Tick(float DeltaTime) override;
 	// End of APawn interface
 
 public:
@@ -79,11 +85,15 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
-	
-
 private:
 	// Vision component
 	UPROPERTY(VisibleDefaultsOnly)
 	TObjectPtr<class UCPP_VisionComponent> VisionComp = nullptr;
-};
 
+	// Stopwatch properties
+	UPROPERTY()
+	UUserWidget* StopwatchWidget;
+
+	float StopwatchTime;
+	bool bStopwatchRunning;
+};
