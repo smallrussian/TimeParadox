@@ -5,7 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "CPP_InteractionInterface.h"
+#include "CPP_LightController.h"
+#include "Components/PointLightComponent.h"
 #include "CPP_Switch.generated.h"
+
 
 
 UCLASS()
@@ -25,6 +28,13 @@ public:
  
 	// Sets whether or not a switch can be activated
 	void SetCanActivate(bool bIsActivatable) { bCanActivate = bIsActivatable; }
+	
+	// Reference to the door that this button controls
+    UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Switch Properties")
+    class ADoor* DoorToControl;
+    
+    UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Switch Properties")
+    class ACPP_LightController* bp_lightcontroller;
 
 protected:
 	// Called when the game starts or when spawned
@@ -67,11 +77,7 @@ private:
  
 	// Actor linked to a switch that should activate when the switch does
 	// EditInstanceOnly means that only instances of this class in the level can have this property set
-	UPROPERTY(EditInstanceOnly, Category = "Switch Properties")
-	TObjectPtr<AActor> LinkedActor = nullptr;
-
-	// Reference to the door that this button controls
-	UPROPERTY(EditAnywhere, Category = "Switch Properties")
-	class ADoor* DoorToControl;
+	//UPROPERTY(EditInstanceOnly, Category = "Switch Properties")
+	//TObjectPtr<AActor> LinkedActor = nullptr;
 
 };

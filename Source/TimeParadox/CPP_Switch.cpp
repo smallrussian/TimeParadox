@@ -5,6 +5,11 @@
 
 #include "Door.h"
 
+#include "CPP_LightController.h"
+#include "Engine/World.h"
+#include "EngineUtils.h"
+#include "GameFramework/Actor.h"
+
 // Sets default values
 ACPP_Switch::ACPP_Switch()
 {
@@ -67,33 +72,41 @@ void ACPP_Switch::ActivateActor()
 		{
 			DoorToControl->ToggleDoor();
 		}
+		
+		if(bp_lightcontroller)
+		{
+			bp_lightcontroller->ToggleLights(bIsActivated);
+
+			bp_lightcontroller->ToggleEmergencyLightsColor(!bIsActivated);
+		}
+          
+                
+		    
+		
  
 		// If the switch has not already activated, it now has
-		if (!bHasActivated)
-		{
-			bHasActivated = true;
-		}
+		
  
 		// If the switch has a linked actor ...
-		if (LinkedActor)
-		{
-			// Attempt to get that actor's Interaction interface
-			// Make sure you are declaring a pointer of type 'I' CPP_InteractionInterface, not 'U'
-			if (ICPP_InteractionInterface* ActorInterface = Cast<ICPP_InteractionInterface>(LinkedActor))
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Here"));
-				// Execute their version of ActivateActor
-				ActorInterface->ActivateActor();
-			}
-		}
- 
-		// Debug: Notify that no linked actor has been assigned to the switch
-		else
-		{
-			// Don't forget to dereference return value of name
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Switch: No Linked Actor Assigned"));
-			//PRINT_VAR("Switch %s: No Linked Actor Assigned", Red, *GetActorNameOrLabel());
-		}
+		// if (LinkedActor)
+		// {
+		// 	// Attempt to get that actor's Interaction interface
+		// 	// Make sure you are declaring a pointer of type 'I' CPP_InteractionInterface, not 'U'
+		// 	if (ICPP_InteractionInterface* ActorInterface = Cast<ICPP_InteractionInterface>(LinkedActor))
+		// 	{
+		// 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Here"));
+		// 		// Execute their version of ActivateActor
+		// 		ActorInterface->ActivateActor();
+		// 	}
+		// }
+ 	//
+		// // Debug: Notify that no linked actor has been assigned to the switch
+		// else
+		// {
+		// 	// Don't forget to dereference return value of name
+		// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Switch: No Linked Actor Assigned"));
+		// 	//PRINT_VAR("Switch %s: No Linked Actor Assigned", Red, *GetActorNameOrLabel());
+		// }
 	}
  
 	
