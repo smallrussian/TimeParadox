@@ -25,7 +25,7 @@ class TIMEPARADOX_API ATimeGameState : public AGameStateBase
 public:
 	ATimeGameState();
 
-	UPROPERTY(BlueprintReadOnly, Category = "Time")
+	UPROPERTY(BlueprintReadWrite, Category = "Time")
 	ETimelineState CurrentTimeline;
 
 	virtual void BeginPlay() override;

@@ -40,6 +40,9 @@ class ATimeParadoxCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Input, meta=(AllowPrivateAccess = "true"))
 	bool PauseTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Input, meta=(AllowPrivateAccess = "true"))
+	float YLevelOffset = 500.0f;
 	
 public:
 	ATimeParadoxCharacter();
@@ -59,6 +62,9 @@ public:
 
 	
 
+
+	
+
 protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -68,6 +74,8 @@ protected:
 
 	/** Called for interact input */
 	void Interact(const FInputActionValue& Value);
+
+	
 
 protected:
 	// APawn interface

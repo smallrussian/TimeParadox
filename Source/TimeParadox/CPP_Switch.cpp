@@ -4,7 +4,7 @@
 #include "CPP_Switch.h"
 
 #include "Door.h"
-
+#include "TimeGameState.h"
 #include "CPP_LightController.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
@@ -57,61 +57,51 @@ void ACPP_Switch::Tick(float DeltaTime)
 void ACPP_Switch::ActivateActor()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Button clicked."));
-	
-	// Determine if the switch in question can be activated
-	if (bCanActivate || bHasActivated || bActivateAnyTime)
+
+	// Get the current Game State
+	ATimeGameState* GameState = GetWorld()->GetGameState<ATimeGameState>();
+
+	if (GameState)
 	{
-		
-		// Flip the switch's activation status
-		bIsActivated = !bIsActivated;
- 
-		// Change color parameter of dynamic material to reflect activation status
-		SetButtonColor();
-
-		if (DoorToControl)
+		// Check the current timeline
+		if (GameState->CurrentTimeline == ETimelineState::Present)
 		{
-			DoorToControl->ToggleDoor();
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Switch is disabled in the present timeline."));
+			return; // Do nothing if in the present
 		}
-		
-		if(bp_lightcontroller)
+		else if (GameState->CurrentTimeline == ETimelineState::Past)
 		{
-			bp_lightcontroller->ToggleLights(bIsActivated);
+			// Toggle the activation state
+			bIsActivated = !bIsActivated;
 
-			bp_lightcontroller->ToggleEmergencyLightsColor(!bIsActivated);
+			// Change button color
+			SetButtonColor();
+
+			// Control the linked light controllers in both past and present
+			for (ACPP_LightController* LightController : LightControllersToControl)
+			{
+				if (LightController)
+				{
+					LightController->ToggleLights(bIsActivated);
+					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Lights toggled in past and present timelines."));
+				}
+			}
+
+			if (DoorToControl)
+			{
+				DoorToControl->ToggleDoor();
+			}
 		}
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("GameState is null."));
+	}
           
                 
 		    
-		
- 
-		// If the switch has not already activated, it now has
-		
- 
-		// If the switch has a linked actor ...
-		// if (LinkedActor)
-		// {
-		// 	// Attempt to get that actor's Interaction interface
-		// 	// Make sure you are declaring a pointer of type 'I' CPP_InteractionInterface, not 'U'
-		// 	if (ICPP_InteractionInterface* ActorInterface = Cast<ICPP_InteractionInterface>(LinkedActor))
-		// 	{
-		// 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Here"));
-		// 		// Execute their version of ActivateActor
-		// 		ActorInterface->ActivateActor();
-		// 	}
-		// }
- 	//
-		// // Debug: Notify that no linked actor has been assigned to the switch
-		// else
-		// {
-		// 	// Don't forget to dereference return value of name
-		// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Switch: No Linked Actor Assigned"));
-		// 	//PRINT_VAR("Switch %s: No Linked Actor Assigned", Red, *GetActorNameOrLabel());
-		// }
-	}
- 
-	
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, TEXT("Button status: "+ FString::FromInt(bIsActivated)));
 }
+
 
 // Sets the color of the switch's button material
 void ACPP_Switch::SetButtonColor()

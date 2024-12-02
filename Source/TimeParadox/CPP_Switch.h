@@ -28,6 +28,9 @@ public:
  
 	// Sets whether or not a switch can be activated
 	void SetCanActivate(bool bIsActivatable) { bCanActivate = bIsActivatable; }
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Switch Properties")
+	TArray<class ACPP_LightController*> LightControllersToControl;
 	
 	// Reference to the door that this button controls
     UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Switch Properties")

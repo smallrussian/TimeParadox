@@ -12,6 +12,7 @@
 #include "Engine/LocalPlayer.h"
 #include "CPP_InteractionInterface.h"
 #include "CPP_VisionComponent.h"
+#include "TimeGameState.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -69,12 +70,16 @@ void ATimeParadoxCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 		// Interact
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ATimeParadoxCharacter::Interact);
+
+	
 	}
 	else
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 }
+
+
 
 
 void ATimeParadoxCharacter::Move(const FInputActionValue& Value)
@@ -128,3 +133,4 @@ void ATimeParadoxCharacter::Interact(const FInputActionValue& Value)
 		}
 	}
 }
+
