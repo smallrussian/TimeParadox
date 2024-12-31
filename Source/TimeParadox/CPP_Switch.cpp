@@ -83,6 +83,7 @@ void ACPP_Switch::ActivateActor()
 				if (LightController)
 				{
 					LightController->ToggleLights(bIsActivated);
+					LightController->ToggleEmergencyLightsColor(!bIsActivated);
 					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Lights toggled in past and present timelines."));
 				}
 			}
